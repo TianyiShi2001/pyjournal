@@ -19,7 +19,7 @@ to be completed...
 ### Supported Journals
 
 - Nature (all Journals under Nature Research)
-- Elsevier (all Journals under Nature Research)
+- Elsevier (all Journals under Elsevier)
 
 ### Supported Institutions
 
