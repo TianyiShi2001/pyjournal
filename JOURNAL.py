@@ -7,12 +7,10 @@ def _for_requests(seleniumCookies):
     return {item["name"]:item["value"] for item in seleniumCookies}
 
 def mkPrinter(ss, es):
-    @functools.wraps
     def printer(func, ss = ss, es = es):
-        @functools.wraps
-        def wrapper():
+        def wrapper(*args, **kwargs):
             print(ss)
-            func()
+            func(*args, **kwargs)
             print(es)
         return wrapper
     return printer
@@ -57,6 +55,4 @@ class JOURNAL(object):
 
     def _pdf_write(self, content):
         with open(OUTDIR + self.name + '.pdf', 'wb') as f:
-            print('Downloading PDF...')
             f.write(content)
-            print('Done.')

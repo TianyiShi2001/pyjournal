@@ -15,5 +15,5 @@ def jerusalem():
 
 AUTH = {
     'University of Oxford': ['shibboleth', oxford],
-    'Hebrew University of Jerusalem': ['OpenAthens', jerusalem]
+    'Hebrew University of Jerusalem': ['openathens', jerusalem]
 }
