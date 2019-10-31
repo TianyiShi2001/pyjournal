@@ -1,4 +1,4 @@
-# pyjournal — Journal Article Automatic Download & Renaming
+# pyjournal — Journal Article Automatic Download & Management
 
 ## Why pyjournal?
 
@@ -29,5 +29,15 @@ to be completed...
 
 主要有两种方式可以帮助推进这个项目。
 
-1. 在AUTH.py文件中，添加你的单位的登录验证方式
+1. 在AUTH.py文件中，添加你的单位的登录方法
 2. 添加更多的期刊支持。
+
+### 登录方法
+
+首先确定你所在的单位的验证方式（OpenAthens还是Shibboleth），并添加到`AUTH.py`的末尾的`AUTH`字典中。每个键值对的格式为`'<单位全称>': {'<shibboleth/openathens>', <对应的登录函数>}`.
+
+然后写登录函数。
+首先确定你所在的单位的验证方式（OpenAthens还是Shibboleth），并添加到`AUTH.py`的末尾的`AUTH`字典中。每个键值对的格式为`'<单位全称>': {'<shibboleth/openathens>', <对应的登录函数>}`.
+https://login.openathens.net
+
+一般，要用Selenium模拟登陆。
