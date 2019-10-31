@@ -3,6 +3,7 @@ import re
 from elsevier import *
 from nature import *
 import requests
+from UTILS import pdf_modify, ris_modify
 
 
 siteMap = {
@@ -53,6 +54,8 @@ def main():
             break
     for url in urls:
         siteMap[_parse_site(url)](url)
+        time.sleep(1)
+        pdf_modify(); ris_modify()
 
 if __name__ == "__main__":
     main()

@@ -1,36 +1,39 @@
 #/usr/bin/env python
 
 from pathlib import Path
-import dill
-from AUTH import AUTHMETHODS
+import dill, yaml
 from getpass import getpass
 import functools
+from os.path import expanduser
 
-#################### CUSTOMISABLE #####################
-OUTDIR = str(Path.home()) + '/Downloads/'
-CONFIGDIR = str(Path.home()) + '/Library/pyjournal/'
-CREDENTIALSPATH = CONFIGDIR + 'CREDENTIALS'
+
+for k, v in yaml.full_load(open('_config.yaml')).items():
+    if isinstance(v, str) and v[0] == '~':
+        locals().update({k:expanduser(v)})
+    else:
+        locals().update({k:v})
+
+for dir in [OUTDIR, CONFIGDIR, DESTDIR]:
+    Path(dir).mkdir(parents=True, exist_ok=True)
+
+KEYPATH = CONFIGDIR + 'KEY'
 COOKIEPATH = CONFIGDIR + 'cookies'
-####################################################### 
 
-def loginMaker(UNAME, PASSWD, UNI):
-    @functools.wraps
-    def wrapper(sel):
-        AUTHMETHODS[UNI](sel, UNAME = UNAME, PASSWD = PASSWD)
-    return wrapper
-
-Path(OUTDIR).mkdir(parents=True, exist_ok=True)
-Path(CONFIGDIR).mkdir(parents=True, exist_ok=True)
-
-if not Path.exists(Path(CREDENTIALSPATH)): # First time configuration
+if not Path.exists(Path(KEYPATH)): # First time configuration
+    from AUTH import AUTH
+    def loginMaker(UNAME, PASSWD, UNI):
+        @functools.wraps
+        def wrapper(*args, **kwargs):
+            AUTH[UNI][1](UNAME = UNAME, PASSWD = PASSWD, *args, **kwargs)
+        return wrapper
     CREDENTIALS = [
         input('Username: '),
         getpass('Password: '),
         input('Library service provider/uni/institution full name: ')
     ]
-    LOGIN = loginMaker(*CREDENTIALS)
-    with open(CREDENTIALSPATH, 'wb') as f:
-        dill.dump(LOGIN, f)
+    KEY = [CREDENTIALS[2], AUTH[CREDENTIALS[2]][0], loginMaker(*CREDENTIALS)]
+    with open(KEYPATH, 'wb') as f:
+        dill.dump(KEY, f)
 
-with open(CREDENTIALSPATH, 'rb') as f:
-    LOGIN = dill.load(f)
+with open(KEYPATH, 'rb') as f:
+    UNI, AUTHTYPE, LOGIN = dill.load(f)

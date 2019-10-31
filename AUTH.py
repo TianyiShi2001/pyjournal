@@ -10,6 +10,10 @@ def oxford(sel, UNAME, PASSWD):
     sel.find_element_by_class_name('go_button').click()
     time.sleep(1)
 
-AUTHMETHODS = {
-    'University of Oxford': oxford
+def jerusalem():
+    pass
+
+AUTH = {
+    'University of Oxford': ['shibboleth', oxford],
+    'Hebrew University of Jerusalem': ['OpenAthens', jerusalem]
 }

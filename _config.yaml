@@ -1,0 +1,29 @@
+--- # ------------------------- Paths --------------------------------
+
+# Directories MUST end with a '/'
+
+OUTDIR: ~/Downloads/
+# The directory to which pdf and ris documents are downloaded (stored temporarily)
+DESTDIR: ~/Documents/!Learn/!Tut/
+
+# --------------------- Reference Management -------------------------
+
+BIBPATH: ~/Documents/Github/ox/content/bib/main.bib
+# Your personal .bib file, to which citation info of newly downloaded articles are appended. Leave blank if you don't want to enable this feature.
+USEKEYWORDS: yes
+# Use the 'keywords' field contained in .ris files?
+BIBDESKGROUPS: [Y]
+# BibDesk groups. If you don't use BibDesk, leave blank.
+# CITEKEYFORMAT: %a-%yz
+# %a        author
+# %y, %Y    year (19, 2019)
+# %4j       first 4 letter of journal name e.g. Nature => Natu; can replace 4 with other integers
+# %z        appropriate trailing unique letter. For example, if Foo-2019 is already used and the new article is also written by Foo in 2019, Foo-2019a will be used
+
+KEEPRIS: no
+# If no (default behaviour), .ris files will be deleted after adding to your personal .bib file
+
+##### Default values are recommended for the following variables #####
+
+CONFIGDIR: ~/Library/pyjournal/
+# Paths to which the key (used for login) and cookies are stored.

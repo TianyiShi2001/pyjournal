@@ -27,4 +27,7 @@ to be completed...
 
 ## Contributing
 
-to be completed...
+主要有两种方式可以帮助推进这个项目。
+
+1. 在AUTH.py文件中，添加你的单位的登录验证方式
+2. 添加更多的期刊支持。

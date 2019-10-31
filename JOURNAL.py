@@ -1,9 +1,30 @@
 import pickle, os, time
 from CONFIG import OUTDIR, COOKIEPATH
+import functools
 
 
 def _for_requests(seleniumCookies):
     return {item["name"]:item["value"] for item in seleniumCookies}
+
+def mkPrinter(ss, es):
+    @functools.wraps
+    def printer(func, ss = ss, es = es):
+        @functools.wraps
+        def wrapper():
+            print(ss)
+            func()
+            print(es)
+        return wrapper
+    return printer
+
+def mkPrinter_download(type):
+    ss = f'Downloading {type} to{OUTDIR}...'
+    es = f'{type} downloaded.'
+    return mkPrinter(ss, es)
+
+risPrinter = mkPrinter_download('ris')
+pdfPrinter = mkPrinter_download('pdf')
+risAndPdfPrinter = mkPrinter_download('ris and pdf')
 
 class JOURNAL(object):
     
