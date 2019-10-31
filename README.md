@@ -14,6 +14,16 @@ The mission of pyjournal is to subdue these distractions and allow users to focu
 
 to be completed...
 
+传统的下载/整理期刊文章的方法有不少麻烦事儿，它们使我写作业的体验变得很不愉快：
+
+- 当cookie过期时，要重新手动登录。这可能会很麻烦，尤其是对于机构登录（你经常需要跳转两三次，然后填一个机构名称搜索框，再跳转到机构的登录页面登录）。
+- 有些网站的pdf/citation的下载链接藏得很深。看看[JBC](http://www.jbc.org/content/early/2019/10/30/jbc.RA119.009424.abstract)文章的界面，你能找到它的citation下载吗？
+- 有些网站下载pdf是右键直接保存，有些必须要打开一个新页面，然后另存为。这经常很烦。
+- 下载的pdf文件名通常是一堆毫无意义的数字。你经常需要为它们重命名一个正常的名字——如果你用bibtex，你一定会使它的名字和cite-key一样，方便查找。然后，你需要一个个把它们移到你当前项目的工作文件夹。
+- 你需要把citation文件一个个拖到你的citation管理应用中。然后删除它们。
+
+为了能够愉快的写作业，我开发了`pyjournal`来解决这些问题。
+
 ## Availability
 
 ### Supported Journals
