@@ -1,3 +1,5 @@
+VERBOSE: yes
+
 # ------------------------- Paths --------------------------------
 
 # Directories MUST end with a '/'
@@ -8,17 +10,19 @@ DESTDIR: ~/Documents/!Learn/!Tut/
 
 # --------------------- Reference Management -------------------------
 
-BIBPATH: ~/Documents/Github/ox/content/bib/main.bib
+BIBPATH: main.bib
 # Your personal .bib file, to which citation info of newly downloaded articles are appended. Leave blank if you don't want to enable this feature.
 USEKEYWORDS: yes
 # Use the 'keywords' field contained in .ris files?
-BIBDESKGROUPS: [Y]
+BIBDESKGROUPS: [foo, bar]
 # BibDesk groups. If you don't use BibDesk, leave blank.
 # CITEKEYFORMAT: %a-%yz
 # %a        author
 # %y, %Y    year (19, 2019)
 # %4j       first 4 letter of journal name e.g. Nature => Natu; can replace 4 with other integers
 # %z        appropriate trailing unique letter. For example, if Foo-2019 is already used and the new article is also written by Foo in 2019, Foo-2019a will be used
+
+PREPEND: yes
 
 KEEPRIS: no
 # If no (default behaviour), .ris files will be deleted after adding to your personal .bib file

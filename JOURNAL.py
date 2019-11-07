@@ -1,28 +1,29 @@
 import pickle, os, time
 from CONFIG import OUTDIR, COOKIEPATH
-import functools
+from functools import wraps
 
 
 def _for_requests(seleniumCookies):
     return {item["name"]:item["value"] for item in seleniumCookies}
 
-def mkPrinter(ss, es):
-    def printer(func, ss = ss, es = es):
+def mkLogger(ss, es):
+    def logger(func, ss = ss, es = es):
+        @wraps(func)
         def wrapper(*args, **kwargs):
             print(ss)
             func(*args, **kwargs)
             print(es)
         return wrapper
-    return printer
+    return logger
 
-def mkPrinter_download(type):
+def mkLogger_download(type):
     ss = f'Downloading {type} to{OUTDIR}...'
     es = f'{type} downloaded.'
-    return mkPrinter(ss, es)
+    return mkLogger(ss, es)
 
-risPrinter = mkPrinter_download('ris')
-pdfPrinter = mkPrinter_download('pdf')
-risAndPdfPrinter = mkPrinter_download('ris and pdf')
+risLogger = mkLogger_download('ris')
+pdfLogger = mkLogger_download('pdf')
+risAndPdfLogger = mkLogger_download('ris and pdf')
 
 class JOURNAL(object):
     

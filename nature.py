@@ -21,7 +21,7 @@ class Nature(JOURNAL):
     def _cookies_get(self):
         sel = webdriver.Chrome()
         sel.get(self.url)
-        if AUTHTYPE is 'shibboleth':
+        if AUTHTYPE == 'shibboleth':
             sel.find_element_by_link_text('Shibboleth').click()
             time.sleep(1)
             sel.find_element_by_id('keywords-institutions').send_keys(UNI)
@@ -33,12 +33,12 @@ class Nature(JOURNAL):
             self._cookies_write(cookies)
             return cookies
         
-    @risPrinter
+    @risLogger
     def get_ris(self):
         with open(OUTDIR + self.name + '.ris', 'wb') as f:
             f.write(requests.get(self.url + '.ris').content)
 
-    @pdfPrinter
+    @pdfLogger
     def get_pdf(self):
         try:
             self._pdf_write(requests.get(self.url + '.pdf', cookies=self._cookies_retrieve()).content)

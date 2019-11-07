@@ -3,7 +3,7 @@ import re
 from elsevier import *
 from nature import *
 import requests
-from UTILS import pdf_modify, ris_modify
+from UTILS import UTILS
 
 
 siteMap = {
@@ -55,7 +55,7 @@ def main():
     for url in urls:
         siteMap[_parse_site(url)](url)
         time.sleep(1)
-        pdf_modify(); ris_modify()
+        UTILS()
 
 if __name__ == "__main__":
     main()

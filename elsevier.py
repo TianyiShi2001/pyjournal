@@ -2,7 +2,7 @@
 from selenium import webdriver
 import time, re
 import requests
-from JOURNAL import JOURNAL, risAndPdfPrinter
+from JOURNAL import JOURNAL, risAndPdfLogger
 from lxml import etree as le
 from CONFIG import LOGIN, OUTDIR, UNI, AUTHTYPE
 
@@ -17,19 +17,19 @@ class Elsevier(JOURNAL):
 
     def _cookies_get(self):
         sel = webdriver.Chrome()
-        if AUTHTYPE is 'shibboleth':
-            sel.get(self.signInUrl)
-            time.sleep(0.5)
-            sel.find_element_by_id('auto_inst_srch').send_keys(UNI)
-            time.sleep(0.5)
-            sel.find_element_by_class_name('inst-name').click()
-            time.sleep(1)
-            LOGIN(sel)
-            cookies = sel.get_cookies()
-            self._cookies_write(cookies)
-            return cookies
+        # if AUTHTYPE == 'shibboleth':
+        sel.get(self.signInUrl)
+        time.sleep(0.5)
+        sel.find_element_by_id('auto_inst_srch').send_keys(UNI)
+        time.sleep(0.5)
+        sel.find_element_by_class_name('inst-name').click()
+        time.sleep(1)
+        LOGIN(sel)
+        cookies = sel.get_cookies()
+        self._cookies_write(cookies)
+        return cookies
 
-    @risAndPdfPrinter
+    @risAndPdfLogger
     def get_ris_and_pdf(self):
         sel = webdriver.Chrome()
         sel.get(self.url)

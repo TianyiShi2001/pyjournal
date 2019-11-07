@@ -3,9 +3,11 @@
 from pathlib import Path
 import dill, yaml
 from getpass import getpass
-import functools
+from functools import wraps
 from os.path import expanduser
 
+OUTDIR, DESTDIR, CONFIGDIR = [None] * 3
+BIBPATH, USEKEYWORDS, BIBDESKGROUPS, KEEPRIS, VERBOSE = [None] * 5
 
 for k, v in yaml.full_load(open('_config.yaml')).items():
     if isinstance(v, str) and v[0] == '~':
@@ -22,9 +24,9 @@ COOKIEPATH = CONFIGDIR + 'cookies'
 if not Path.exists(Path(KEYPATH)): # First time configuration
     from AUTH import AUTH
     def loginMaker(UNAME, PASSWD, UNI):
-        @functools.wraps
+        func = AUTH[UNI][1]
         def wrapper(*args, **kwargs):
-            AUTH[UNI][1](UNAME = UNAME, PASSWD = PASSWD, *args, **kwargs)
+            func(UNAME = UNAME, PASSWD = PASSWD, *args, **kwargs)
         return wrapper
     CREDENTIALS = [
         input('Username: '),
@@ -37,3 +39,5 @@ if not Path.exists(Path(KEYPATH)): # First time configuration
 
 with open(KEYPATH, 'rb') as f:
     UNI, AUTHTYPE, LOGIN = dill.load(f)
+
+print(UNI, AUTHTYPE, LOGIN)
