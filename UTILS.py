@@ -5,6 +5,7 @@ from glob import glob
 import os
 import lxml.etree as le
 
+
 class UTILS(object):
     '''Set of actions after downloading
     '''
@@ -20,10 +21,11 @@ class UTILS(object):
         self.ris_update()
 
     def ris_latest(self):
-        ris_all = glob(OUTDIR+ '*.[rR][iI][sS]') # * means all if need specific format then *.csv
+        ris_all = glob(OUTDIR + '*.[rR][iI][sS]')  # * means all if need specific format then *.csv
         return max(ris_all, key=os.path.getctime)
+
     def pdf_latest(self):
-        pdf_all = glob(OUTDIR+ '*.[pP][dD][fF]')
+        pdf_all = glob(OUTDIR + '*.[pP][dD][fF]')
         return max(pdf_all, key=os.path.getctime)
 
     def update_citeKey(self, citeKey):
@@ -34,11 +36,12 @@ class UTILS(object):
         usedCiteKeys = regex.findall(r'(?<=@\w+\{).+(?=,)', bib)
         updatedCiteKey = citeKey
 
-        i = 1; l = 'abcdefghi'
+        i = 1
+        l = 'abcdefghi'
         while updatedCiteKey in usedCiteKeys:
             updatedCiteKey = citeKey + l[i]
             i += 1
-    
+
         return updatedCiteKey
 
     def get_citeKey(self):
@@ -47,7 +50,6 @@ class UTILS(object):
         author = regex.search(r'(?<=(AU|A1)  - )\w+', ris).group(0)
         year = regex.search(r'(?<=PY  - )\d+', ris).group(0)
         return self.update_citeKey(author + '-' + year)
-
 
     def ris_to_bib(self):
         risToBib = {
@@ -64,31 +66,34 @@ class UTILS(object):
             'EP': 'Pages',
             'DO': 'Doi',
             'UR': 'Url'
-        }   
-        
+        }
+
         if USEKEYWORDS:
             risToBib.update({'KW': 'Keywords'})
 
-        ris = [] # list of raw ris entries, each entry is a list of k&v, e.g. [['AU', 'Shi, Tianyi'], ['T1', 'Foo bar'], ...
+        ris = []  # list of raw ris entries, each entry is a list of k&v, e.g. [['AU', 'Shi, Tianyi'], ['T1', 'Foo bar'], ...
         for line in open(self.risSrc):
-            entry = line.rstrip('\n').split('  - ') 
+            entry = line.rstrip('\n').split('  - ')
             if risToBib.get(entry[0]):
                 ris.append(entry)
 
-        bib = {} # dict ready to write bib format 
-        ris_keys = set(list(zip(*ris))[0]) # ignore repetitions, e.g. AU
-        for key in ris_keys: # construct {bibKey:[<empty list>]} for each bibKey
-            bib.update({risToBib.get(key):[]})
-        for entry in ris: # append values from ris entries to corresponding bibKeys
+        bib = {}  # dict ready to write bib format
+        ris_keys = set(list(zip(*ris))[0])  # ignore repetitions, e.g. AU
+        for key in ris_keys:  # construct {bibKey:[<empty list>]} for each bibKey
+            bib.update({risToBib.get(key): []})
+        for entry in ris:  # append values from ris entries to corresponding bibKeys
             bib[risToBib[entry[0]]].append(entry[1])
 
-        # bibtex formatting 
-        bib['Author'] = [' and '.join(bib['Author'])] 
-        bib['Pages'] = ['--'.join(bib['Pages'])]
+        # bibtex formatting
+        bib['Author'] = [' and '.join(bib['Author'])]
+        try:
+            bib['Pages'] = ['--'.join(bib['Pages'])]
+        except:
+            pass
 
         # getting rid of the list (now all entries should have one list item)
         for key, value in bib.items():
-            bib.update({key:value[0]})
+            bib.update({key: value[0]})
 
         # formatting for output
         bibRecordMain = ',\n\t'.join([f'{key} = {{{value}}}' for key, value in bib.items()])
@@ -113,15 +118,18 @@ class UTILS(object):
                 writeLoc = f.tell()
 
                 plist = ''
-                while (line:=f.readline()) != '</plist>\n':
+                line = ''
+                while line != '</plist>\n':
+                    line = f.readline()
                     plist += line
 
                 groups = {}
                 for group in le.XML(plist).xpath('//dict'):
                     k, v = group.xpath('./string/text()')
-                    groups.update({k:v})
+                    groups.update({k: v})
 
-                if lst := groups.get(GROUP):
+                lst = groups.get(GROUP)
+                if lst:
                     groups[GROUP] = ','.join([lst, newKey])
                 else:
                     groups[GROUP] = newKey
@@ -138,10 +146,10 @@ class UTILS(object):
                     \t</dict>''')
                 f.write('</array>\n</plist>\n}}')
 
-    def pdf_update(self, dst = DESTDIR):
+    def pdf_update(self, dst=DESTDIR):
         os.rename(self.pdfSrc, dst + self.newKey + '.pdf')
 
-    def ris_update(self, dst = DESTDIR):
+    def ris_update(self, dst=DESTDIR):
         src = self.risSrc
         if KEEPRIS:
             os.rename(src, dst + self.newKey + '.ris')

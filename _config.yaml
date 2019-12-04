@@ -1,5 +1,12 @@
 VERBOSE: yes
 
+# -------------------------- Auth --------------------------------
+
+DEFAULTAUTHMETHOD: shibboleth
+
+SPECIFICAUTHMETHODS:
+  plos: default
+
 # ------------------------- Paths --------------------------------
 
 # Directories MUST end with a '/'

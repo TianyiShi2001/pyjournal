@@ -1,17 +1,17 @@
-#/usr/bin/env python3
+# /usr/bin/env python3
 import re
-from elsevier import *
-from nature import *
 import requests
-from UTILS import UTILS
-
+import time
+from UTILS import *
+import journals as j
 
 siteMap = {
-    'sciencedirect':Elsevier,
-    'elsevier':Elsevier,
-    'cell':Cell,
-    'nature':Nature
+    'sciencedirect': j.elsevier.Elsevier,
+    'elsevier': j.elsevier.Elsevier,
+    'cell': j.elsevier.Cell,
+    'nature': j.nature.Nature,
 }
+
 
 def _parse_doi(url):
     """If the input is a doi, return the redirected link. Else return the input link
@@ -25,8 +25,8 @@ def _parse_doi(url):
     """
     if re.search(r'^10\.\d+/', url):
         return requests.get('https://doi.org/' + url).url
-    elif  re.match(r'(http(s)*://)*(www\.)*(\w+)(\..+)', url).group(4) == 'doi':
-        return requests.get('https://doi' + re.match(r'(http(s)*://)*(www\.)*(\w+)(\..+)', url).group(5)).url 
+    elif re.match(r'(http(s)*://)*(www\.)*(\w+)(\..+)', url).group(4) == 'doi':
+        return requests.get('https://doi' + re.match(r'(http(s)*://)*(www\.)*(\w+)(\..+)', url).group(5)).url
     else:
         return url
 
@@ -42,7 +42,7 @@ def _parse_site(url):
     'elsevier'
     """
     return re.match(r'(http(s)*://)*(www\.)*(.+\.)*(\w+)(\.\w+/)', _parse_doi(url)).group(5)
-    
+
 
 def main():
     urls = []
@@ -56,6 +56,7 @@ def main():
         siteMap[_parse_site(url)](url)
         time.sleep(1)
         UTILS()
+
 
 if __name__ == "__main__":
     main()

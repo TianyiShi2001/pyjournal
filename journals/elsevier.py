@@ -1,54 +1,70 @@
 #!/usr/bin/env python
-from selenium import webdriver
-import time, re
+import re
+import time
+
 import requests
-from JOURNAL import JOURNAL, risAndPdfLogger
 from lxml import etree as le
-from CONFIG import LOGIN, OUTDIR, UNI, AUTHTYPE
+from selenium import webdriver
+
+import elsevier
+from CONFIG import AUTHTYPE, LOGIN, OUTDIR, UNI
+
+from .JOURNAL import JOURNAL, risAndPdfLogger
 
 
 class Elsevier(JOURNAL):
     name = 'Elsevier'
     signInUrl = 'https://www.sciencedirect.com/customer/institutionchoice'
 
-    def __init__(self, url):
-        self.url = url
+    def __init__(self, url, method='default'):
+        self.__routine(url, method)
         self.get_ris_and_pdf()
 
-    def _cookies_get(self):
+    def __cookies_get_shibboleth(self):
+        self.logger.debug('Opening webdriver...')
         sel = webdriver.Chrome()
-        # if AUTHTYPE == 'shibboleth':
+        self.logger.debug(f'Connecting to the singInUrl: {self.signInUrl}')
         sel.get(self.signInUrl)
         time.sleep(0.5)
         sel.find_element_by_id('auto_inst_srch').send_keys(UNI)
         time.sleep(0.5)
         sel.find_element_by_class_name('inst-name').click()
-        time.sleep(1)
+        time.sleep(3)
         LOGIN(sel)
         cookies = sel.get_cookies()
-        self._cookies_write(cookies)
+        self._cookies_write(cookies, 'shibboleth')
         return cookies
 
-    @risAndPdfLogger
+    def __cookies_get_default(self):
+        pass
+
+    def _cookies_get(self):
+        return {
+            'shibboleth': self.__cookies_get_shibboleth,
+            'default': self.__cookies_get_default
+        }[self.method]
+
     def get_ris_and_pdf(self):
         sel = webdriver.Chrome()
         sel.get(self.url)
         time.sleep(1)
         try:
             sel.find_element_by_id('export-citation').click()
-            sel.find_element_by_xpath('//*[text()="Export citation to RIS"]').click() # Download citations
+            sel.find_element_by_xpath(
+                '//*[text()="Export citation to RIS"]').click()  # Download citations
         except:
-            self.url = sel.find_element_by_link_text('Access this article on ScienceDirect').get_attribute('href')
+            self.url = sel.find_element_by_link_text(
+                'Access this article on ScienceDirect').get_attribute('href')
             self.get_ris_and_pdf()
         try:
             cookies = self._cookies_read()[self.name]
         except:
             cookies = self._cookies_get()
-        for i in cookies: # add cookies to get access
+        for i in cookies:  # add cookies to get access
             sel.add_cookie({
-                'domain':i['domain'],
-                'name':i['name'],
-                'value':i['value']
+                'domain': i['domain'],
+                'name': i['name'],
+                'value': i['value']
             })
         sel.refresh()
         sel.get(self.url)
@@ -64,12 +80,19 @@ class Elsevier(JOURNAL):
             cookies = self._cookies_get()
             input('Updated cookies. Press any key to continue.')
             self.get_ris_and_pdf()
-        
+
+
 class ElsevierImprint(Elsevier):
 
-    def __init__(self, url):
-        self.url = le.HTML(requests.get(url).text).xpath('//a[text()="Access this article on ScienceDirect"]/@href')[0]
+    def __init__(self, url, authMethod):
+        if authMethod != 'default':
+            self.url = le.HTML(requests.get(url).text).xpath(
+                '//a[text()="Access this article on ScienceDirect"]/@href')[0]
         self.get_ris_and_pdf()
+
+    def __cookies_get_default(self):
+        pass
+
 
 class Cell(ElsevierImprint):
     pass
